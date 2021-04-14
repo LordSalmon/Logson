@@ -13,35 +13,33 @@ namespace Logson
             this.LogConfig = config;
         }
 
-        public Logger Information(string project, string message)
+        public Logger Information(string project, string action, string message)
         {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine(this.LogConfig.BuildMessage(project, message));
-            Console.ResetColor();
+            WriteMessage(ConsoleColor.Magenta, project, action, message);
             return this;
         }
 
-        public Logger Warning(string project, string message)
+        public Logger Warning(string project, string action, string message)
         {
-            this.WriteMessage(ConsoleColor.Magenta, project, message);
+            WriteMessage(ConsoleColor.Yellow, project, action, message);
             return this;
         }
 
-        public Logger Debug(string project, string message)
+        public Logger Debug(string project, string action, string message)
         {
-            this.WriteMessage(ConsoleColor.DarkCyan, project, message);
+            WriteMessage(ConsoleColor.DarkCyan, project, action, message);
             return this;
         }
 
-        public Logger Error(string project, string message)
+        public Logger Error(string project, string action, string message)
         {
-            this.WriteMessage(ConsoleColor.Red, project, message);
+            WriteMessage(ConsoleColor.Red, project, action, message);
             return this;
         }
 
-        public Logger Success(string project, string message)
+        public Logger Success(string project, string action, string message)
         {
-            this.WriteMessage(ConsoleColor.Green, project, message);
+            WriteMessage(ConsoleColor.Green, project, action, message);
             return this;
         }
 
@@ -53,7 +51,7 @@ namespace Logson
             return this;
         }
 
-        private async Task<bool> WriteMessage(ConsoleColor foreGroundColor, string project, string message)
+        private async Task<bool> WriteMessage(ConsoleColor foreGroundColor, string project, string action, string message)
         {
             Console.ForegroundColor = foreGroundColor;
             if (this.LogConfig.UseBackgroundColor)
@@ -61,7 +59,7 @@ namespace Logson
                 Console.BackgroundColor = this.LogConfig.BackgroundColor;
             }
 
-            string finalMessage = this.LogConfig.BuildMessage(project, message);
+            string finalMessage = this.LogConfig.BuildMessage(project, action, message);
             Console.WriteLine(finalMessage);
             if (this.LogConfig.SaveToFile)
             {

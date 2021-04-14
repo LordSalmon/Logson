@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Logson
 {
@@ -11,11 +12,13 @@ namespace Logson
         public string Separator { get; set; }
         public bool UseBackgroundColor { get; set; }
         public int MaxProjectLength { get; set; }
+        public int MaxActionLength { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
+        public bool CapitalizeAction { get; set; }
         public char NewSectionCharacter { get; set; }
         public int NewSectionLength { get; set; }
 
-        public string BuildMessage(string project, string message)
+        public string BuildMessage(string project, string action, string message)
         {
             string result = "";
             if (AddTimeStamp)
@@ -29,12 +32,36 @@ namespace Logson
             }
             else
             {
-                project = new string(' ', (MaxProjectLength - project.Length) / 2) + project + new string(' ', (MaxProjectLength - project.Length) / 2);
+                project = new string(' ', (MaxProjectLength - project.Length) / 2) + project +
+                          new string(' ', (MaxProjectLength - project.Length) / 2);
             }
 
             project += project.Length % 2 == 1 ? " " : "";
-            
-            return result += $"[ {project} ] {Separator} {message}";
+
+            if (CapitalizeAction)
+            {
+                string[] actionSplit = action.Split(" ");
+                string actionEdit = action;
+
+                for (int i = 0; i < actionSplit.Length; i++)
+                {
+                    actionSplit[i] = actionSplit[i][0].ToString().ToUpper() + actionSplit[i].Substring(1);
+                }
+
+                action = String.Join("", actionSplit);
+            }
+
+            if (action.Length > MaxActionLength)
+            {
+                action = action.Substring(0, MaxActionLength);
+            }
+            else
+            {
+                action = new string(' ', (MaxActionLength - action.Length) / 2) + action +
+                         new string(' ', (MaxActionLength - action.Length) / 2);
+            }
+
+            return result += $"[ {project} ][ {action} ] {Separator} {message}";
         }
 
         public LogConfig SetLogFile(string logFilePath)
@@ -45,6 +72,7 @@ namespace Logson
             {
                 File.Create(logFilePath).Close();
             }
+
             return this;
         }
     }
